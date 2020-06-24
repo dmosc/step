@@ -1,9 +1,35 @@
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+.container {
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 650px;
+    padding: 2%;
 }
 
-#greeting-container {
-  margin-top: 20px;
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.row-portfolio {
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-start;
+}
+
+/* Bootstrap overriding */
+.badge {
+    margin: 5px 0px;
+}
+
+.row {
+    margin: 10px 0px;
+}
+
+.networks {
+    display: flex;
+    justify-content: flex-start;
 }

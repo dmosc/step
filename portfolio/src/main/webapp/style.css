@@ -20,6 +20,15 @@
     align-items: flex-start;
 }
 
+.list-item-portfolio {
+    width: 100%;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
 /* Bootstrap overriding */
 .badge {
     margin: 5px 0px;
@@ -27,6 +36,10 @@
 
 .row {
     margin: 10px 0px;
+}
+
+.col {
+    padding: 20px;
 }
 
 .networks {

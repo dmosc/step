@@ -2,17 +2,47 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>My Portfolio</title>
+    <title>ODRM</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col" style="justify-content: flex-end;">
+                <div class="row" style="display: flex; flex-direction: column;">
+                    <h6>Networks</h6>
+                    <div id="social_networks" class="networks"></div>
+                </div>
+            </div>
+            <div class="col col-6">
+                <div class="row row-portfolio">
+                    <h4>Oscar David Rodriguez Moscosa</h4>
+                    <span class="badge badge-pill badge-primary" style="margin-right: 5px;">+52 3320814167</span>
+                    <span class="badge badge-pill badge-primary">oscardavidrodriguezm@gmail.com</span>
+                </div>
+                <div class="row row_portfolio" style="margin-top: 10px;">
+                    <p class="lead text-wrap" style="width: 400px;">
+                        I am a rising sophomore CS student at Tec de Monterrey. I'd really like to develop myself as a
+                        Machine Learning professional. It is a technology I'm really passionate about.
+                    </p>
+                </div>
+                <div class="row row-portfolio">
+                    <h6>Projects</h6>
+                    <ul id="projects" class="list-group list-group-flush" style="margin-left: 0px; width: 400px;"></ul>
+                </div>
+                <div class="row row-portfolio">
+                    <h6>What I like</h6>
+                    <ul id="hobbies" class="list-group list-group-flush" style="margin-left: 0px; width: 400px;"></ul>
+                </div>
+            </div>
+            <div class="col" style="display: flex; justify-content: center; align-items: flex-start;">
+                <img alt="Profile picture" class="img-thumbnail" width="200px" src="/static/images/profile_picture.jpg" />
+            </div>
+        </div>
     </div>
   </body>
+  <script type="module" src="/static/constants/index.js"></script>
 </html>

@@ -5,8 +5,7 @@ export default (() => {
     hobbies.forEach(hobby => {
         const hobby_to_append = document.createElement("li");
 
-        hobby_to_append.classList.add("list-group-item", "text-wrap");
-        hobby_to_append.style = "width: 100%;";
+        hobby_to_append.classList.add("list-group-item", "text-wrap", "list-item-portfolio");
         hobby_to_append.innerHTML = hobby;
 
         hobbies_section.append(hobby_to_append);

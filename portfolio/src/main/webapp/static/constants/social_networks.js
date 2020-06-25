@@ -15,8 +15,7 @@ export default (() => {
         network_to_append.target = "_blank";
 
         const icon = document.createElement("i");
-        icon.classList.add('fab', `fa-${key}`);
-        icon.style = "width: 20px; height: 20px;";
+        icon.classList.add('fab', `fa-${key}`, 'icon');
 
         network_to_append.appendChild(icon);
         networks_section.append(network_to_append);

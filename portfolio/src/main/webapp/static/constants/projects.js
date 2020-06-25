@@ -21,8 +21,7 @@ export default (() => {
         
         const project_to_append = document.createElement("li");
 
-        project_to_append.classList.add("list-group-item", "text-wrap");
-        project_to_append.style = "width: 100%;";
+        project_to_append.classList.add("list-group-item", "text-wrap", "list-item-portfolio");
 
         project_to_append.appendChild(title);
         project_to_append.appendChild(document.createElement("br"));

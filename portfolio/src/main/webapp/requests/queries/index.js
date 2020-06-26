@@ -1,24 +1,42 @@
-const get_comments = async () => {
-    const payload = await fetch('/comments');
-    const comments = await payload.json();
+const getComments = async (limit = 5) => {
+    
+    let comments;
+    try {
+        const payload = await fetch(`/comments?limit=${limit}`);
+        const data = await payload.text();
+        comments = JSON.parse(data); // Verify that the payload is in valid format.
+    } catch (e) {
+        return;
+    }
 
-    const comments_section = document.getElementById("comments");
-    comments.forEach(comment_payload => {
+    const commentsSectionTitle = document.getElementById("comments-title");
+
+    commentsSectionTitle.innerHTML = `Comments (${limit})`;
+
+    const commentsSection = document.getElementById("comments");
+    commentsSection.innerHTML = ""; // Empty previous loaded comments.
+    comments.forEach(commentPayload => {
         const username = document.createElement("span");
         const comment = document.createElement("p");
+        const deleteOption = document.createElement("i");
 
-        username.innerHTML = `@ ${comment_payload.username}`;
+        username.innerHTML = `@ ${commentPayload.username}`;
         username.classList.add("badge", "badge-dark");
-        comment.innerHTML = comment_payload.comment;
+        comment.innerHTML = commentPayload.comment;
         
-        const comment_to_append = document.createElement("li");
+        deleteOption.classList.add('fas', 'fa-trash', 'icon');
+        deleteOption.onclick = () => deleteComment(commentPayload.id);
+        
+        const commentToAppend = document.createElement("li");
 
-        comment_to_append.classList.add("list-group-item", "text-wrap", "list-item-portfolio");
+        commentToAppend.id = commentPayload.id;
+        commentToAppend.classList.add("list-group-item", "text-wrap", "list-item-portfolio");
 
-        comment_to_append.appendChild(username);
-        comment_to_append.appendChild(document.createElement("br"));
-        comment_to_append.appendChild(comment);
+        commentToAppend.appendChild(username);
+        commentToAppend.appendChild(document.createElement("br"));
+        commentToAppend.appendChild(comment);
+        commentToAppend.appendChild(deleteOption);
 
-        comments_section.append(comment_to_append);
+        commentsSection.append(commentToAppend);
     });
 };

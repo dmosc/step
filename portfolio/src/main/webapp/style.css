@@ -1,9 +1,8 @@
 .container {
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-left: auto;
     margin-right: auto;
-    width: 650px;
     padding: 2%;
 }
 
@@ -20,6 +19,12 @@
     align-items: flex-start;
 }
 
+.list-comments {
+    max-height: 400px;
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
 .list-item-portfolio {
     width: 100%;
 }
@@ -27,6 +32,10 @@
 .icon {
     width: 20px;
     height: 20px;
+}
+
+.icon:hover {
+    cursor: pointer;
 }
 
 /* Bootstrap overriding */

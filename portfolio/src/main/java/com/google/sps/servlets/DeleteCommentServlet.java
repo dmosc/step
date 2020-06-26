@@ -17,33 +17,30 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import java.io.IOException;
+import com.google.gson.Gson;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet responsible for creating new tasks. */
-@WebServlet("/comment")
-public class NewCommentServlet extends HttpServlet {
+@WebServlet("/comment-delete")
+public class DeleteCommentServlet extends HttpServlet {
+    private DatastoreService datastore;
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/json;");
+    @Override public void init() {
+        datastore = DatastoreServiceFactory.getDatastoreService();
+    }
 
-    long timestamp = System.currentTimeMillis();
-    String username, comment;
-    username = request.getParameter("username").length() > 0 ? request.getParameter("username") : "Anonymus";
-    comment = request.getParameter("comment");
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;");
 
-    Entity comment_entity = new Entity("Comment");
-    comment_entity.setProperty("username", username);
-    comment_entity.setProperty("comment", comment);
-    comment_entity.setProperty("timestamp", timestamp);
+        Key key = KeyFactory.createKey("Comment", Long.parseLong(request.getHeader("id")));
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    datastore.put(comment_entity);
-
-    response.sendRedirect("/index.html");
-  }
+        datastore.delete(key);
+        response.sendRedirect("/index.html");
+    }
 }

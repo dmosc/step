@@ -3,26 +3,24 @@
   <head>
     <meta charset="UTF-8">
     <title>ODRM</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="/requests/mutations/index.js"></script>
+    <script src="/requests/queries/index.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
-    <script src="/requests/queries/index.js"></script>
-    <script src="/requests/mutations/index.js"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
-  <body onload="get_comments()">
+  <body onload="getComments()">
     <div class="container">
         <div class="row">
-            <div class="col" style="justify-content: flex-end;">
-                <div class="row" style="display: flex; flex-direction: column;">
-                    <h6>Networks</h6>
-                    <div id="social_networks" class="networks"></div>
-                </div>
+            <div class="col">
                 <div class="row">
-                    <form action="/comment" method="POST">
+                    <form action="/comments" method="POST">
                         <div class="form-group">
                             <label for="comment">Tell me something</label>
-                            <textarea name="comment" id="comment" class="form-control" rows="5" placeholder="Comment..."></textarea>
+                            <textarea name="comment" id="comment" class="form-control" rows="5" placeholder="Comment..." required></textarea>
                         </div>
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
@@ -33,9 +31,19 @@
                         <button type="submit" class="btn btn-primary">Send</button>
                     </form>
                 </div>
-                <div class="row" style="display: flex; flex-direction: column;">
-                    <h6>Comments</h6>
-                    <ul id="comments" class="list-group" style="margin-left: 0px; width: 300px;"></ul>
+                <div class="row">
+                    <h6 id="comments-title">Comments</h6>
+                    <ul id="comments" class="list-group list-comments" style="margin-left: 0px; width: 300px;"></ul>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" style="margin-top: 5px;" type="button" id="fetch-count" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Fetch last...
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="fetch-count">
+                            <a class="dropdown-item" href="#" onclick="getComments(5)">5</a>
+                            <a class="dropdown-item" href="#" onclick="getComments(10)">10</a>
+                            <a class="dropdown-item" href="#" onclick="getComments(20)">20</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col">
@@ -59,8 +67,14 @@
                     <ul id="hobbies" class="list-group list-group-flush" style="margin-left: 0px; width: 400px;"></ul>
                 </div>
             </div>
-            <div class="col" style="display: flex; justify-content: center; align-items: flex-start;">
-                <img alt="Profile picture" class="rounded mx-auto d-block" width="200px" src="/static/images/profile_picture.jpg" />
+            <div class="col" style="display: flex; flex-direction: column; justify-content: flex-start; align-items: center;">
+                <div class="row">
+                    <img alt="Profile picture" class="rounded mx-auto d-block" width="200px" src="/static/images/profile_picture.jpg" />
+                </div>
+                <div class="row" style="display: flex; flex-direction: column;">
+                    <h6>Networks</h6>
+                    <div id="social_networks" class="networks"></div>
+                </div>
             </div>
         </div>
     </div>

@@ -2,47 +2,68 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ODRM</title>
-    <link rel="stylesheet" href="style.css">
+    <script src="/functions/index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
-  <body>
+  <body onload="getComments(); getProjects(page, DEFAULT_PAGE_SIZE);">
     <div class="container">
         <div class="row">
-            <div class="col" style="justify-content: flex-end;">
-                <div class="row" style="display: flex; flex-direction: column;">
-                    <h6>Networks</h6>
-                    <div id="social_networks" class="networks"></div>
-                </div>
+            <div class="col title-section">
+                <div class="profile-picture"></div>
+                <h4>Oscar David Rodriguez Moscosa</h4>
+                <div id="social_networks" class="networks"></div>
+                <p class="lead text-wrap title-section-summary">
+                    I am a rising sophomore Computer Science student at Tec de Monterrey in Mexico. 
+                    I've been learning Web Development for a year now and some Machine Learning. I am really
+                    passionate for movies.
+                </p>
             </div>
-            <div class="col col-6">
-                <div class="row row-portfolio">
-                    <h4>Oscar David Rodriguez Moscosa</h4>
-                    <span class="badge badge-pill badge-primary" style="margin-right: 5px;">+52 3320814167</span>
-                    <span class="badge badge-pill badge-primary">oscardavidrodriguezm@gmail.com</span>
-                </div>
-                <div class="row row_portfolio" style="margin-top: 10px;">
-                    <p class="lead text-wrap" style="width: 400px;">
-                        I am a rising sophomore CS student at Tec de Monterrey. I'd really like to develop myself as a
-                        Machine Learning professional. It is a technology I'm really passionate about.
-                    </p>
-                </div>
-                <div class="row row-portfolio">
-                    <h6>Projects</h6>
-                    <ul id="projects" class="list-group list-group-flush" style="margin-left: 0px; width: 400px;"></ul>
-                </div>
-                <div class="row row-portfolio">
-                    <h6>What I like</h6>
-                    <ul id="hobbies" class="list-group list-group-flush" style="margin-left: 0px; width: 400px;"></ul>
-                </div>
+        </div>
+        <div class="row">
+            <div class="row vertical">
+                <h5>Projects</h5>
+                <div id="projects" class="grid"></div>
+                <button type="button" class="btn btn-info btn-sm" onclick="loadMoreProjects()">Load more</button>
             </div>
-            <div class="col" style="display: flex; justify-content: center; align-items: flex-start;">
-                <img alt="Profile picture" class="img-thumbnail" width="200px" src="/static/images/profile_picture.jpg" />
+        </div>
+        <div class="row comments-section">
+            <div class="col">
+                <form id="new-comment-form">
+                    <div class="form-group">
+                        <h5 for="comment">Tell me something</h5>
+                        <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Comment..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="username" id="username" class="form-control" placeholder="Username">
+                    </div>
+                    <button type="submit" class="btn btn-secondary btn-sm">Send</button>
+                </form>
+            </div>
+            <div class="col">
+                <div class="vertical">
+                    <h5 id="comments-title">Comments</h5>
+                    <ul id="comments" class="list-group list-group-flush list-comments"></ul>
+                </div>
+                <div>
+                    <form id="limit-form" class="form-inline limit-form">
+                        <div class="input-group input-group-sm limit-form-input">
+                            <input type="number" class="form-control" name="limit" id="limit" placeholder="Fetch last..." min="1" max="100">
+                        </div>
+                        <button type="submit" class="btn btn-secondary btn-sm">Fetch</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
   </body>
   <script type="module" src="/static/constants/index.js"></script>
+  <script src="/requests/queries/index.js"></script>
+  <script src="/requests/mutations/index.js"></script>
 </html>

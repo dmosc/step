@@ -52,6 +52,15 @@ html {
     align-items: center;
 }
 
+.header-tags {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.header-tags > span {
+    margin-right: 5px;
+}
+
 .vertical {
     display: flex; 
     flex-direction: column;

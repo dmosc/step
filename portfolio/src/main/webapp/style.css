@@ -1,37 +1,114 @@
+/* Hide scrollbar Chrome, Safari and Opera */
+* {
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar IE and Edge */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 .container {
-    justify-content: space-between;
+    padding: 3% 5%;
+    animation-name: fadeInLeft;
+    animation-duration: 1.5s;
+}
+
+.title-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.title-section-summary {
+    width: 60%;
+}
+
+.comments-section {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 2%;
+}
+
+.grid {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    max-height: 60vh;
+    overflow: scroll;
+    padding: 20px;
+    margin-bottom: 30px;
+    scroll-behavior: smooth;
 }
 
 .header {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.row-portfolio {
+.vertical {
     display: flex; 
-    flex-direction: column; 
+    flex-direction: column;
+    justify-content: center;
     align-items: flex-start;
+}
+
+.limit-form {
+    margin-top: 10px;
+}
+
+.limit-form-input {
+    margin-right: 10px;
+    width: 100px;
+    min-width: 100px;
 }
 
 .list-comments {
-    max-height: 400px;
+    height: 300px;
+    max-height: 300px;
+    width: 100%;
+    min-width: 100%;
+    background-color: white;
+    box-shadow: 0 0 3rem 0 rgba(136, 152, 170, 0.15);
     overflow: scroll;
     -webkit-overflow-scrolling: touch;
 }
 
-.list-item-portfolio {
+.list-item-comment {
     width: 100%;
+    padding: 5%;
+}
+
+.list-tags {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.list-tags > span {
+    margin-right: 5px;
+}
+
+.profile-picture {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 20px;
+    background-image: url("static/images/profile_picture.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 3rem 0 rgba(136, 152, 170, 0.15);
 }
 
 .icon {
-    width: 20px;
-    height: 20px;
+    min-width: 25px;
+    min-height: 25px;
 }
 
 .icon:hover {
@@ -39,19 +116,80 @@
 }
 
 /* Bootstrap overriding */
+.row .col {
+    margin-bottom: 20px;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0 1rem 0 rgba(136, 152, 170, 0.15);
+    cursor: pointer;
+}
+
+.card:hover {
+    box-shadow: 0 0 3rem 0 rgba(136, 152, 170, 0.15);
+}
+
+.form-control {
+    border: 0;
+    box-shadow: 0 0 3rem 0 rgba(136, 152, 170, 0.15);
+    resize: none;
+    font-weight: 400;
+    font-size: 18px;
+}
+
 .badge {
     margin: 5px 0px;
-}
-
-.row {
-    margin: 10px 0px;
-}
-
-.col {
-    padding: 20px;
 }
 
 .networks {
     display: flex;
     justify-content: flex-start;
+}
+
+/* Keyframes */
+@keyframes fadeInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-80px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-1 {
+    -webkit-animation-duration: 0.8s;
+    animation-duration: 0.8s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.animate-2 {
+    -webkit-animation-duration: 1.4s;
+    animation-duration: 1.4s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.animate--fadeInLeft {
+    -webkit-animation-name: fadeInLeft;
+    animation-name: fadeInLeft;
+}
+
+@media only screen and (max-width: 768px) {
+    .comments-section {
+        flex-direction: column;
+        margin-top: 20px;
+    }
+
+    .title-section {
+        align-items: center;
+    }
+    
+    .title-section-summary {
+        width: 100%;
+    }
 }

@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.ArrayList;
 import com.google.gson.Gson;
 import com.google.sps.classes.Comment;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.json.simple.JSONObject;
+import java.util.Scanner;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,11 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
-    private DatastoreService datastore;
-
-    @Override public void init() {
-        datastore = DatastoreServiceFactory.getDatastoreService();
-    }
+    private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -69,10 +69,20 @@ public class CommentsServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;");
+        Gson gson = new Gson();
+
+        String body = getBody(request);
+        JSONObject json = new JSONObject();
+        try {
+            JSONParser parser = new JSONParser();
+            json = (JSONObject) parser.parse(body);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         long timestamp = System.currentTimeMillis();
-        String username = getParameter(request, "username", "Anonymous");
-        String comment = getParameter(request, "comment", "...");
+        String username = getAttribute(json, "username", "Anonymous");
+        String comment = getAttribute(json, "comment", "...");
 
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("username", username);
@@ -82,7 +92,12 @@ public class CommentsServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentEntity);
 
-        response.sendRedirect("/index.html");
+        long id = commentEntity.getKey().getId();
+
+        Comment newComment = new Comment(username, comment, timestamp, id);
+
+        String payload = gson.toJson(newComment);
+        response.getWriter().println(payload);
     }
 
     private String getParameter(HttpServletRequest request, String parameter, String defaultValue) {
@@ -92,5 +107,23 @@ public class CommentsServlet extends HttpServlet {
         }
 
         return value;
+    }
+
+    private String getAttribute(JSONObject json, String attribute, String defaultValue) {
+        String value = (String) json.get(attribute);
+        if (value == null) {
+            return defaultValue;
+        }
+
+        return value;
+    }
+
+    private String getBody(HttpServletRequest request) throws IOException {
+        if ("POST".equalsIgnoreCase(request.getMethod())) {
+            Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\\A");
+            return s.hasNext() ? s.next() : "";
+        }
+
+        return "";
     }
 }

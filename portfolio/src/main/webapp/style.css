@@ -124,6 +124,13 @@ html {
     cursor: pointer;
 }
 
+#map {
+  border: none;
+  height: 300px;
+  width: 100%;
+  box-shadow: 0 0 3rem 0 rgba(136, 152, 170, 0.15);
+}
+
 /* Bootstrap overriding */
 .row .col {
     margin-bottom: 20px;

@@ -22,6 +22,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -39,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
     private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    private enum Emotion { Happy, Neutral, Mad };
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -54,9 +58,10 @@ public class CommentsServlet extends HttpServlet {
             String username = (String) entity.getProperty("username");
             String comment = (String) entity.getProperty("comment");
             long timestamp = (long) entity.getProperty("timestamp");
+            String emotion = (String) entity.getProperty("emotion");
             long id = entity.getKey().getId();
 
-            Comment commentToSet = new Comment(username, comment, timestamp, id);
+            Comment commentToSet = new Comment(username, comment, timestamp, emotion, id);
             commentsToSet.add(commentToSet);
         }
 
@@ -80,21 +85,26 @@ public class CommentsServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        long timestamp = System.currentTimeMillis();
         String username = getAttribute(json, "username", "Anonymous");
         String comment = getAttribute(json, "comment", "...");
+        long timestamp = System.currentTimeMillis();
+        double sentiment = analyzeSentiment(comment);
+        Emotion emotion =
+            sentiment >= -1 && sentiment <= -0.3 ? Emotion.Mad :
+            sentiment > -0.3 && sentiment <= 0.3 ? Emotion.Neutral :
+            Emotion.Happy;
 
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("username", username);
         commentEntity.setProperty("comment", comment);
         commentEntity.setProperty("timestamp", timestamp);
+        commentEntity.setProperty("emotion", emotion.name());
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(commentEntity);
 
         long id = commentEntity.getKey().getId();
 
-        Comment newComment = new Comment(username, comment, timestamp, id);
+        Comment newComment = new Comment(username, comment, timestamp, emotion.name(), id);
 
         String payload = gson.toJson(newComment);
         response.getWriter().println(payload);
@@ -125,5 +135,22 @@ public class CommentsServlet extends HttpServlet {
         }
 
         return "";
+    }
+
+    private double analyzeSentiment(String comment) throws IOException {
+        try (LanguageServiceClient languageService = LanguageServiceClient.create()) {
+            Document document = Document
+                .newBuilder()
+                .setContent(comment)
+                .setType(Document.Type.PLAIN_TEXT)
+                .build();
+
+            double sentiment = (double) languageService
+                .analyzeSentiment(document)
+                .getDocumentSentiment()
+                .getScore();
+
+            return sentiment;
+        }
     }
 }

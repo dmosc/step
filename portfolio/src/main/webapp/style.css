@@ -52,6 +52,15 @@ html {
     align-items: center;
 }
 
+.header-tags {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.header-tags > span {
+    margin-right: 5px;
+}
+
 .vertical {
     display: flex; 
     flex-direction: column;
@@ -113,6 +122,13 @@ html {
 
 .icon:hover {
     cursor: pointer;
+}
+
+#map {
+  border: none;
+  height: 300px;
+  width: 100%;
+  box-shadow: 0 0 3rem 0 rgba(136, 152, 170, 0.15);
 }
 
 /* Bootstrap overriding */

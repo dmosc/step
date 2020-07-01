@@ -5,11 +5,13 @@ public class Comment {
     private final String comment;
     private final long timestamp;
     private final long id;
+    private final String emotion;
 
-    public Comment(String username, String comment, long timestamp, long id) {
+    public Comment(String username, String comment, long timestamp, String emotion, long id) {
         this.username = username;
         this.comment = comment;
         this.timestamp = timestamp;
+        this.emotion = emotion;
         this.id = id;
     }
 
@@ -23,6 +25,10 @@ public class Comment {
 
     public long getTimeStamp() {
         return timestamp;
+    }
+    
+    public String getEmotion() {
+        return emotion;
     }
 
     public long getId() {

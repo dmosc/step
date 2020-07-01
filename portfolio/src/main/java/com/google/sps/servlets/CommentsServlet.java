@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/comments")
 public class CommentsServlet extends HttpServlet {
     private final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    private enum Emotion { Happy, Neutral, Mad };
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -57,11 +58,10 @@ public class CommentsServlet extends HttpServlet {
             String username = (String) entity.getProperty("username");
             String comment = (String) entity.getProperty("comment");
             long timestamp = (long) entity.getProperty("timestamp");
-            double sentiment = (double) entity.getProperty("sentiment");
             String emotion = (String) entity.getProperty("emotion");
             long id = entity.getKey().getId();
 
-            Comment commentToSet = new Comment(username, comment, timestamp, sentiment, emotion, id);
+            Comment commentToSet = new Comment(username, comment, timestamp, emotion, id);
             commentsToSet.add(commentToSet);
         }
 
@@ -89,23 +89,22 @@ public class CommentsServlet extends HttpServlet {
         String comment = getAttribute(json, "comment", "...");
         long timestamp = System.currentTimeMillis();
         double sentiment = analyzeSentiment(comment);
-        String emotion =
-            sentiment >= -1 && sentiment <= -0.3 ? "Mad" :
-            sentiment > -0.3 && sentiment <= 0.3 ? "Neutral" :
-            "Happy";
+        Emotion emotion =
+            sentiment >= -1 && sentiment <= -0.3 ? Emotion.Mad :
+            sentiment > -0.3 && sentiment <= 0.3 ? Emotion.Neutral :
+            Emotion.Happy;
 
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("username", username);
         commentEntity.setProperty("comment", comment);
         commentEntity.setProperty("timestamp", timestamp);
-        commentEntity.setProperty("sentiment", sentiment);
-        commentEntity.setProperty("emotion", emotion);
+        commentEntity.setProperty("emotion", emotion.name());
 
         datastore.put(commentEntity);
 
         long id = commentEntity.getKey().getId();
 
-        Comment newComment = new Comment(username, comment, timestamp, sentiment, emotion, id);
+        Comment newComment = new Comment(username, comment, timestamp, emotion.name(), id);
 
         String payload = gson.toJson(newComment);
         response.getWriter().println(payload);
@@ -150,8 +149,6 @@ public class CommentsServlet extends HttpServlet {
                 .analyzeSentiment(document)
                 .getDocumentSentiment()
                 .getScore();
-
-            languageService.close();
 
             return sentiment;
         }

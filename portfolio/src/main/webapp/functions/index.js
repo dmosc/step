@@ -8,18 +8,14 @@ const createCommentElement = commentPayload => {
     username.classList.add("badge", "badge-dark");
     comment.innerHTML = commentPayload.comment;
 
-    const score = parseFloat(commentPayload.sentiment);
-    const emotion =
-        score >= -1 && score <= -0.3 ? "Mad" :
-        score > -0.3 && score <= 0.3 ? "Neutral" :
-        "Happy";
+    const emotion = commentPayload.emotion;
 
     const badgeToSet =
-        score >= -1 && score <= -0.3 ? "danger" :
-        score > -0.3 && score <= 0.3 ? "warning" :
+        emotion === "Mad" ? "danger" :
+        emotion === "Neutral" ? "warning" :
         "success";
     
-    sentiment.innerHTML = `#${emotion}`;
+    sentiment.innerHTML = `# ${emotion}`;
     sentiment.classList.add("badge", `badge-${badgeToSet}`);
     
     deleteOption.classList.add("fas", "fa-trash", "icon");

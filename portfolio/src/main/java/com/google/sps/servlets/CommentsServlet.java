@@ -58,9 +58,10 @@ public class CommentsServlet extends HttpServlet {
             String comment = (String) entity.getProperty("comment");
             long timestamp = (long) entity.getProperty("timestamp");
             double sentiment = (double) entity.getProperty("sentiment");
+            String emotion = (String) entity.getProperty("emotion");
             long id = entity.getKey().getId();
 
-            Comment commentToSet = new Comment(username, comment, timestamp, sentiment, id);
+            Comment commentToSet = new Comment(username, comment, timestamp, sentiment, emotion, id);
             commentsToSet.add(commentToSet);
         }
 
@@ -87,19 +88,24 @@ public class CommentsServlet extends HttpServlet {
         String username = getAttribute(json, "username", "Anonymous");
         String comment = getAttribute(json, "comment", "...");
         long timestamp = System.currentTimeMillis();
-        double sentiment = getSentiment(comment);
+        double sentiment = analyzeSentiment(comment);
+        String emotion =
+            sentiment >= -1 && sentiment <= -0.3 ? "Mad" :
+            sentiment > -0.3 && sentiment <= 0.3 ? "Neutral" :
+            "Happy";
 
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("username", username);
         commentEntity.setProperty("comment", comment);
         commentEntity.setProperty("timestamp", timestamp);
         commentEntity.setProperty("sentiment", sentiment);
+        commentEntity.setProperty("emotion", emotion);
 
         datastore.put(commentEntity);
 
         long id = commentEntity.getKey().getId();
 
-        Comment newComment = new Comment(username, comment, timestamp, sentiment, id);
+        Comment newComment = new Comment(username, comment, timestamp, sentiment, emotion, id);
 
         String payload = gson.toJson(newComment);
         response.getWriter().println(payload);
@@ -132,21 +138,22 @@ public class CommentsServlet extends HttpServlet {
         return "";
     }
 
-    private double getSentiment(String comment) throws IOException {
-        Document document = Document
-            .newBuilder()
-            .setContent(comment)
-            .setType(Document.Type.PLAIN_TEXT)
-            .build();
+    private double analyzeSentiment(String comment) throws IOException {
+        try (LanguageServiceClient languageService = LanguageServiceClient.create()) {
+            Document document = Document
+                .newBuilder()
+                .setContent(comment)
+                .setType(Document.Type.PLAIN_TEXT)
+                .build();
 
-        LanguageServiceClient languageService = LanguageServiceClient.create();
-        double sentiment = (double) languageService
-            .analyzeSentiment(document)
-            .getDocumentSentiment()
-            .getScore();
+            double sentiment = (double) languageService
+                .analyzeSentiment(document)
+                .getDocumentSentiment()
+                .getScore();
 
-        languageService.close();
+            languageService.close();
 
-        return sentiment;
+            return sentiment;
+        }
     }
 }

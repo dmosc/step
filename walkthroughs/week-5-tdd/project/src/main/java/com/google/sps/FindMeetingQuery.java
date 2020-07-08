@@ -21,6 +21,30 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
+/**
+* The FindMeetingQuery receives a new Meeting request to fit inside a
+* calendar day with existing meetings. It provides an interface to
+* handle incoming meetings that must be scheduled for users without
+* generating interference/overlapping with their existing meetings.
+* 
+* Algorithmic analysis
+* N = Scheduled events
+* M = Attendees within scheduled events
+*
+* Time complexity: N * M
+* Space complexity: N being the availableTimeRanges ArrayList since it is technically possible to have N available time ranges.
+*   This depends on the analysis rules that are set since all the linear structures
+*   that are used inside the method are for storing and parsing the incoming parameters.
+*   Thus, they shouldn't be considered as extra space because it's not space needed directly
+*   for the solution of the algorithm.
+*   The arrays minutesNoOptAttendees and minutesOptAttendees can be considered constant since
+*   they represent an abstraction of a whole day divided in minutes.
+*
+* @param Collection<Event> List of scheduled events.
+* @param MeetingRequest Event to fit in the available time windows.
+* @return Collection<TimeRange>
+*/
+
 public final class FindMeetingQuery {
     public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
         int TIME_WINDOW_IN_MINUTES = 60 * 24;
@@ -40,8 +64,8 @@ public final class FindMeetingQuery {
             /* Verify that at least one of the request attendees
             is scheduled for the current event. */
             Set<String> eventAttendees = event.getAttendees();
-            Boolean isAnyoneBusy = !Collections.disjoint(eventAttendees, attendees); // O + P
-            Boolean isAnyOptionalBusy = !Collections.disjoint(eventAttendees, optionalAttendees); // O + Q
+            Boolean isAnyoneBusy = !Collections.disjoint(eventAttendees, attendees); // M + P
+            Boolean isAnyOptionalBusy = !Collections.disjoint(eventAttendees, optionalAttendees); // M + Q
 
             TimeRange when = event.getWhen();
             int start = when.start();

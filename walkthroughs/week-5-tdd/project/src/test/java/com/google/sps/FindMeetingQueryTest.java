@@ -291,7 +291,7 @@ public final class FindMeetingQueryTest {
     // Leave a small 30 minute window to fit a 15 minute event
     // that can fit both optional and mandatory attendees.
     //
-    // Opt Events:            |-C-|
+    // Opt Events:            |-B-|
     // Events    : |-----A----|       |-----A----|
     // Day       : |-----------------------------|
     // Options   :                |-1-|              

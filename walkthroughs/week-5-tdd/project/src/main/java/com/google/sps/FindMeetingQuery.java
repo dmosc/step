@@ -29,14 +29,10 @@ import java.util.HashSet;
 * 
 * Algorithmic analysis
 * N = Scheduled events
-* M = Attendees within scheduled events
+* M = The pool of people that can attend events
 *
-* Time complexity: N * M
-* Space complexity: N being the availableTimeRanges ArrayList since it is technically possible to have N available time ranges.
-*   This depends on the analysis rules that are set since all the linear structures
-*   that are used inside the method are for storing and parsing the incoming parameters.
-*   Thus, they shouldn't be considered as extra space because it's not space needed directly
-*   for the solution of the algorithm.
+* Time complexity: O(N*M)
+* Space complexity: O(N) being the availableTimeRanges ArrayList since it is technically possible to have N available time ranges.
 *   The arrays minutesNoOptAttendees and minutesOptAttendees can be considered constant since
 *   they represent an abstraction of a whole day divided in minutes.
 *
@@ -57,14 +53,14 @@ public final class FindMeetingQuery {
         ArrayList<TimeRange> availableTimeRanges = new ArrayList<>();
         ArrayList<Event> eventsToSet = new ArrayList<>(events);
 
-        Set<String> attendees = new HashSet<String>(request.getAttendees());
-        Set<String> optionalAttendees = new HashSet<String>(request.getOptionalAttendees());
+        Collection<String> attendees = Collections.unmodifiableCollection(request.getAttendees());
+        Collection<String> optionalAttendees = Collections.unmodifiableCollection(request.getOptionalAttendees());
 
         for (Event event : eventsToSet) { // N
             /* Verify that at least one of the request attendees
             is scheduled for the current event. */
             Set<String> eventAttendees = event.getAttendees();
-            Boolean isAnyoneBusy = !Collections.disjoint(eventAttendees, attendees); // M + P
+            Boolean isAnyMandatoryBusy = !Collections.disjoint(eventAttendees, attendees); // M + P
             Boolean isAnyOptionalBusy = !Collections.disjoint(eventAttendees, optionalAttendees); // M + Q
 
             TimeRange when = event.getWhen();
@@ -73,54 +69,56 @@ public final class FindMeetingQuery {
 
             /* Mark available spaces as busy since there's at
                 least one person from the request that isn't available */
-            if (isAnyoneBusy) {
+            if (isAnyMandatoryBusy) {
                 Arrays.fill(minutesNoOptAttendees, start, end, 0); // end - start ops.
-            }
-
-            if (isAnyoneBusy || isAnyOptionalBusy) {
+                Arrays.fill(minutesOptAttendees, start, end, 0); // end - start ops.
+            } else if (isAnyOptionalBusy) {
                 Arrays.fill(minutesOptAttendees, start, end, 0); // end - start ops.
             }
         }
 
-        ArrayList<TimeRange> timeWindowsNoOptAttendees = getTimeWindows(minutesNoOptAttendees); // 1440
-        ArrayList<TimeRange> timeWindowsOptAttendees = getTimeWindows(minutesOptAttendees); // 1440
-
         long duration = request.getDuration();
-        availableTimeRanges = getAvailableTimeRanges(timeWindowsOptAttendees, duration);
+        availableTimeRanges = getAvailableTimeRanges(minutesOptAttendees, duration);
 
         // If no time range works with optional attendees return the options without them.
-        return availableTimeRanges.size() == 0 ? 
-            getAvailableTimeRanges(timeWindowsNoOptAttendees, duration) : 
-            availableTimeRanges;
+        return availableTimeRanges.size() != 0 ? 
+            availableTimeRanges : 
+            getAvailableTimeRanges(minutesNoOptAttendees, duration);
     }
 
-    private ArrayList<TimeRange> getTimeWindows(Integer[] minutes) {
+    /**
+    * The getAvailableTimeRanges iterates over the already filled minutes array that represents an abstraction
+    * of a day divided in minutes. This array is already "marked" with 0's on the indexes where there's a meeting
+    * already scheduled. The method measures the length of each available section and compares it against the
+    * requested event length to verify if is a possible solution.
+    *
+    * @param Integer[] Array abstraction of a whole day represented in minutes (1 available, 0 unavailable)
+    * @param long Total duration in minutes of the requested event to schedule.
+    * @return ArrayList<TimeRange>
+    */
+    private ArrayList<TimeRange> getAvailableTimeRanges(Integer[] minutes, long duration) {
         int windowSize = 0;
-        ArrayList<TimeRange> timeWindows = new ArrayList<>();
+        ArrayList<TimeRange> timeRanges = new ArrayList<>();
         for (int i = 0; i < minutes.length; i++) {
             if (minutes[i] == 1) {
                 ++windowSize;
-            } else {
-                if (windowSize != 0) {
-                    timeWindows.add(TimeRange.fromStartDuration(i - windowSize, windowSize));
-                    windowSize = 0;
-                }
+            } else if (windowSize != 0) {
+                TimeRange timeRange = TimeRange.fromStartDuration(i - windowSize, windowSize);
+
+                /* If time window is large enough to contain the new meeting,
+                    we have found a solution. */
+                if (timeRange.duration() >= duration)
+                    timeRanges.add(timeRange);
+
+                windowSize = 0;
             }
         }
 
-        timeWindows.add(TimeRange.fromStartDuration(minutes.length - windowSize, windowSize)); // Append last time slot
+        TimeRange timeRange = TimeRange.fromStartDuration(minutes.length - windowSize, windowSize);
 
-        return timeWindows;
-    }
-
-    private ArrayList<TimeRange> getAvailableTimeRanges(ArrayList<TimeRange> timeWindows, long duration) {
-        ArrayList<TimeRange> timeRanges = new ArrayList<>();
-        for (TimeRange timeRange : timeWindows) {
-            /* If time window is large enough to contain the new meeting,
-            we have found a solution. */
-            if (timeRange.duration() >= duration)
-                timeRanges.add(timeRange);
-        }
+        /* Same evaluation but with the remaining time window */
+        if (timeRange.duration() >= duration)
+            timeRanges.add(timeRange);
 
         return timeRanges;
     }

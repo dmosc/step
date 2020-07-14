@@ -158,6 +158,18 @@ html {
     margin: 5px 0px;
 }
 
+.badge-skill {
+    margin: 5px;
+}
+
+.skills {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 60%;
+    margin-bottom: 30px;
+}
+
 .networks {
     display: flex;
     justify-content: flex-start;
@@ -206,6 +218,10 @@ html {
     }
     
     .title-section-summary {
+        width: 100%;
+    }
+    
+    .skills {
         width: 100%;
     }
 }
